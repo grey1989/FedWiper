@@ -1,0 +1,317 @@
+project:
+  name: '%time'
+  template:
+    - name: base
+      conf:
+        save_dir: ./weights/checkpoint
+        save_freq: 0
+        save_best: true
+        print_freq: 100
+        epochs: 40
+        model:
+          type: changed_model # changed_model origin_pretrain_freeze origin_pretrain_unfreeze origin_unpretrain all_changed_model
+          optimizer:
+            type: Adam
+            lr: !!float 1e-3
+            weight_decay: !!float 1e-8
+          lr_scheduler:
+            - type: MultiStepLR
+              milestones: [ 5,15,25]
+              gamma: 0.5
+        dataloader:
+          train:
+            batch_size: 512
+            shuffle: False
+            num_workers: 2
+            transform:
+              - type: RandomResizedCrop
+                size: 224
+                scale: !!python/tuple [0.75, 1]
+              - type: RandomHorizontalFlip
+              - type: ToTensor
+              - type: Normalize
+                mean: !!python/tuple [0.4914, 0.4822, 0.4465]
+                std: !!python/tuple [0.2023, 0.1994, 0.2010]
+            dataset:
+              type: SlicedCIFAR10_IMGSet
+              train: true
+              window_size: 3000
+              overlap_size: 3000
+
+          validate:
+            batch_size: 64
+            shuffle: false
+            num_workers: 2
+            transform:
+              - type: Resize
+                size: 224
+              - type: ToTensor
+              - type: Normalize
+                mean: !!python/tuple [0.4914, 0.4822, 0.4465]
+                std: !!python/tuple [0.2023, 0.1994, 0.2010]
+            dataset:
+              type: CIFAR10_IMGSet
+              train: false
+  train:
+    - title: task0
+      template_name: base
+#      model:
+#        type: origin_unpretrain
+#        param:
+      dataloader:
+        train:
+          dataset:
+            number: 0
+    - title: task1
+      template_name: base
+#      model:
+#        type: origin_pretrain_unfreeze
+#        param:
+      dataloader:
+        train:
+          dataset:
+            number: 1
+    - title: task2
+      template_name: base
+#      model:
+#        type: origin_pretrain_freeze # 预训练不冻住
+#        param:
+      dataloader:
+        train:
+          dataset:
+            number: 2
+
+
+    - title: task3
+      template_name: base
+#      model:
+#        type: changed_model
+#        param:
+      dataloader:
+        train:
+          dataset:
+            number: 3
+#    - title: task4
+#      template_name: base
+#      dataloader:
+#        train:
+#          dataset:
+#            number: 4
+#    - title: task5
+#      template_name: base
+#      dataloader:
+#        train:
+#          dataset:
+#            number: 5
+#    - title: task6
+#      template_name: base
+#      dataloader:
+#        train:
+#          dataset:
+#            number: 6
+#    - title: task7
+#      template_name: base
+#      dataloader:
+#        train:
+#          dataset:
+#            number: 7
+#    - title: task8
+#      template_name: base
+#      dataloader:
+#        train:
+#          dataset:
+#            number: 8
+#    - title: task9
+#      template_name: base
+#      dataloader:
+#        train:
+#          dataset:
+#            number: 8
+#    - title: task10
+#      template_name: base
+#      dataloader:
+#        train:
+#          dataset:
+#            number: 5
+#    - title: task11
+#      template_name: base
+#      dataloader:
+#        train:
+#          dataset:
+#            number: 6
+#    - title: task12
+#      template_name: base
+#      dataloader:
+#        train:
+#          dataset:
+#            number: 7
+#    - title: task13
+#      template_name: base
+#      dataloader:
+#        train:
+#          dataset:
+#            number: 8
+#    - title: task14
+#      template_name: base
+#      dataloader:
+#        train:
+#          dataset:
+#            number: 8
+
+
+  test:
+    - title: test1
+      type: VotingTestContainer
+      voter: 1
+      dataloader:
+        test:
+          batch_size: 64
+          shuffle: false
+          dataset:
+            type: CIFAR10_IMGSet
+            train: false
+    - title: test2
+      type: VotingTestContainer
+      voter: 2
+      dataloader:
+        test:
+          batch_size: 64
+          shuffle: false
+          dataset:
+            type: CIFAR10_IMGSet
+            train: false
+    - title: test3
+      type: VotingTestContainer
+      voter: 3
+      dataloader:
+        test:
+          batch_size: 64
+          shuffle: false
+          dataset:
+            type: CIFAR10_IMGSet
+            train: false
+    - title: test4
+      type: VotingTestContainer
+      voter: 4
+      dataloader:
+        test:
+          batch_size: 64
+          shuffle: false
+          dataset:
+            type: CIFAR10_IMGSet
+            train: false
+#    - title: test5
+#      type: VotingTestContainer
+#      voter: 5
+#      dataloader:
+#        test:
+#          batch_size: 64
+#          shuffle: false
+#          dataset:
+#            type: CIFAR10_IMGSet
+#            train: false
+#    - title: test6
+#      type: VotingTestContainer
+#      voter: 6
+#      dataloader:
+#        test:
+#          batch_size: 64
+#          shuffle: false
+#          dataset:
+#            type: MNIST_IMGSet
+#            train: false
+#    - title: test7
+#      type: VotingTestContainer
+#      voter: 7
+#      dataloader:
+#        test:
+#          batch_size: 64
+#          shuffle: false
+#          dataset:
+#            type: MNIST_IMGSet
+#            train: false
+#    - title: test8
+#      type: VotingTestContainer
+#      voter: 8
+#      dataloader:
+#        test:
+#          batch_size: 64
+#          shuffle: false
+#          dataset:
+#            type: MNIST_IMGSet
+#            train: false
+#    - title: test9
+#      type: VotingTestContainer
+#      voter: 9
+#      dataloader:
+#        test:
+#          batch_size: 64
+#          shuffle: false
+#          dataset:
+#            type: MNIST_IMGSet
+#            train: false
+#    - title: test10
+#      type: VotingTestContainer
+#      voter: 10
+#      dataloader:
+#        test:
+#          batch_size: 64
+#          shuffle: false
+#          dataset:
+#            type: MNIST_IMGSet
+#            train: false
+
+#    - title: test11
+#      type: VotingTestContainer
+#      voter: 11
+#      dataloader:
+#        test:
+#          batch_size: 64
+#          shuffle: false
+#          dataset:
+#            type: CIFAR10_IMGSet
+#            train: false
+#    - title: test12
+#      type: VotingTestContainer
+#      voter: 12
+#      dataloader:
+#        test:
+#          batch_size: 64
+#          shuffle: false
+#          dataset:
+#            type: CIFAR10_IMGSet
+#            train: false
+#    - title: test13
+#      type: VotingTestContainer
+#      voter: 13
+#      dataloader:
+#        test:
+#          batch_size: 64
+#          shuffle: false
+#          dataset:
+#            type: CIFAR10_IMGSet
+#            train: false
+#    - title: test14
+#      type: VotingTestContainer
+#      voter: 14
+#      dataloader:
+#        test:
+#          batch_size: 64
+#          shuffle: false
+#          dataset:
+#            type: CIFAR10_IMGSet
+#            train: false
+#    - title: test15
+#      type: VotingTestContainer
+#      voter: 15
+#      dataloader:
+#        test:
+#          batch_size: 64
+#          shuffle: false
+#          dataset:
+#            type: CIFAR10_IMGSet
+#            train: false
+
+log:
+  log_path: ./logs
+  log_level: WARNING # DEBUG INFO WARNING ERROR CRITICAL

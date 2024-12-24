@@ -1,0 +1,95 @@
+project:
+  name: 45
+  template:
+    - name: base
+      conf:
+        save_dir: ./weights
+        save_freq: 0
+        save_best: true
+        print_freq: 100
+        model:
+          # type: changed_model # changed_model origin_pretrain_freeze origin_pretrain_unfreeze origin_unpretrain all_changed_model
+          optimizer:
+            type: Adam
+            lr: !!float 1e-3
+            weight_decay: !!float 1e-8
+          lr_scheduler:
+            - type: MultiStepLR
+              milestones: [ 30,60 ]
+              gamma: 0.1
+        dataloader:
+          train:
+            batch_size: 128
+            shuffle: true
+            num_workers: 2
+            dataset:
+              type: CIFAR10Set
+              train: true
+          test:
+            batch_size: 256
+            shuffle: false
+            num_workers: 2
+            dataset:
+              type: CIFAR10Set
+              train: false
+  train:
+    - title: 1
+      template_name: base
+      epochs: 90
+      model:
+        type: changed_model # changed_model origin_pretrain_freeze origin_pretrain_unfreeze origin_unpretrain all_changed_model
+        param:
+      dataloader:
+        train:
+          batch_size: 128
+          dataset:
+            type: CIFAR10Set
+            train: true
+
+    - title: 2
+      template_name: base
+      epochs: 90
+      model:
+        type: origin_pretrain_freeze # changed_model origin_pretrain_freeze origin_pretrain_unfreeze origin_unpretrain all_changed_model
+      dataloader:
+        train:
+          batch_size: 128
+          dataset:
+            type: CIFAR10Set
+            train: true
+
+    - title: 原始不冻
+      epochs: 120
+      train_batch_size: 128
+      test_batch_size: 128
+      print_freq: 100
+      model:
+        type: origin_pretrain_unfreeze
+        optimizer:
+          type: Adam
+          lr: !!float 1e-3
+          weight_decay: !!float 1e-8
+        lr_scheduler:
+          - type: MultiStepLR
+            milestones: [ 40,80,110 ]
+            gamma: 0.1
+      dataloader:
+        train:
+          batch_size: 128
+          shuffle: true
+          num_workers: 2
+          dataset:
+            type: CIFAR10Set
+            train: true
+        test:
+          batch_size: 256
+          shuffle: false
+          num_workers: 2
+          dataset:
+            type: CIFAR10Set
+            train: false
+
+
+log:
+  log_path: ./logs
+  log_level: WARNING # DEBUG INFO WARNING ERROR CRITICAL
