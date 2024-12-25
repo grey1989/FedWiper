@@ -12,7 +12,7 @@ project:
           type: changed_model # changed_model origin_pretrain_freeze origin_pretrain_unfreeze origin_unpretrain all_changed_model
           optimizer:
             type: Adam
-            lr: !!float 1e-3
+            lr: !!float 1e-3 #The learning rate for the classification task is 1e-3, that for the object detection task is 1e-2, and that for the semantic segmentation task is 1e-4.
             weight_decay: !!float 1e-8
           lr_scheduler:
             - type: MultiStepLR

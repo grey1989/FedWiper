@@ -1,3 +1,4 @@
+# FedWiper: Federated Unlearning via Universal Adapter
 This is the official code of FedWiper. 
 
 We build a new federated unlearning framework that can achieve 100% unlearning in a federated setting. 
